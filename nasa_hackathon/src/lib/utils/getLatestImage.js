@@ -5,7 +5,7 @@ import { getPreviousPassingTime } from "./getPreviousPassingTime";
 const API_URL = "https://m2m.cr.usgs.gov/api/api/json/stable/";
 
 // returns image link
-export async function getLatestData(requestedPath, requestedRow) {
+export async function getLatestImage(requestedPath, requestedRow) {
   const authRes = await fetch(API_URL + "login-token", {
     method: "POST",
     body: JSON.stringify({
