@@ -46,8 +46,8 @@ const Header = () => {
             <Image 
               src="/images/logo.png"
               alt="logo"
-              width={100}
-              height={100}
+              width={125}
+              height={125}
               style={{ width: '10%', height: 'auto', marginRight: '10px', marginTop: "5px" }}
             />
             <Image 
