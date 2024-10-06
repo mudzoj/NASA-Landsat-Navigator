@@ -6,7 +6,7 @@ import { useState,useEffect } from 'react';
 // import ParticleBackground from './components/ParticleBackground'; // Import your ParticleBackground component
 import { AuthContextProvider, UserAuth } from "./AuthContext";
 import theme from './theme'; // Import your existing theme
-
+import Form from './Form';
 
 export default function Page() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -24,6 +24,7 @@ export default function Page() {
   console.log(user);
 const handleSignIn = async() => {
   try{
+    setAnchorEl(null);
     await googleSignIn()
   } catch(error){
     console.error(error);
@@ -77,6 +78,7 @@ useEffect(() => {
                   <MenuItem onClick={handleSignIn} className="p-2 cursor-pointer">
                     Login
                   </MenuItem>
+           
                   <MenuItem onClick={handleSignIn} className="p-2 cursor-pointer">
                     Sign up
                   </MenuItem>
@@ -92,8 +94,11 @@ useEffect(() => {
                   </div>
                 )}
               </div>
+
             </Toolbar>
+
           </AppBar>
+        
         </AuthContextProvider>
         {/*=================================3D EARTH VIEWER SECTION (INCOMPLETE)======================================== */}
         <Container
@@ -138,8 +143,10 @@ useEffect(() => {
             minHeight: 'calc(100vh - 64px)',
           }}
         ></Container>
-        
+         {user ?(<Form/>) : <></>}
+       
       </div>
+     
     </ThemeProvider>
   );
 }
