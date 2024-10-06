@@ -32,6 +32,7 @@ const Header = () => {
     try {
       setAnchorEl(null);
       await logOut();
+      window.location.reload();
     } catch (error) {
       console.error(error);
     }

@@ -13,6 +13,7 @@ import {
 import theme from "./theme"; // Adjust this import based on your project structure
 import Globe from "./components/Globe"; // Import the Globe component
 import ParticlesBackground from "./components/ParticlesBackground";
+import { AuthContextProvider, useAuth } from "./AuthContext"; // Import useAuth here
 
 const Page = () => {
   const [showStepper, setShowStepper] = useState(false);
@@ -24,8 +25,19 @@ const Page = () => {
   const globeRef = useRef(null);
   const [offset, setOffset] = useState(0);
   const maxOffset = 200; // Set the maximum offset value (adjust as needed)
+  const { isLoggedIn } = useAuth(); // Access the authentication context
+
 
   const handleGetStartedClick = () => {
+    if (!isLoggedIn) {
+      // Scroll to the top of the page
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+      return; // Exit if the user is not logged in
+    }
+  
     setShowStepper(true);
     setTimeout(() => {
       if (stepperRef.current) {
@@ -36,6 +48,7 @@ const Page = () => {
       }
     }, 100);
   };
+  
 
   const handleNext = () => {
     if (activeStep === 0 && name && phone) {
@@ -84,38 +97,39 @@ const Page = () => {
           }}
         >
           <Typography
-            variant="h4"
-            sx={{
-              width: "100vw", // Let the width adjust automatically
-              fontSize: { xs: "24px", sm: "32px" }, // Responsive font sizes
-              color: "white",
-              fontWeight: "bold",
-              fontStyle: "italic",
-              position: "absolute", // Position the text absolutely
-              top: "10%", // Adjust the distance from the top
-              left: "50%",
-              transform: "translate(-50%, -50%)", // Center horizontally and vertically
-              zIndex: 10, // Ensure text appears in front of the globe
-            }}
-          >
-            LAND ANALYSIS REIMAGINED.
-          </Typography>
-
-          <Box
-  ref={globeRef} // Add ref to globe container
+  variant="h4"
   sx={{
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    width: { xs: "90vw", sm: "80vw", md: "60vw" },
-    height: { xs: "90vw", sm: "80vw", md: "60vw" },
-    backgroundColor: "transparent",
-    // marginTop: "-50px", // Decrease from 50px to 20px (or lower)
-    transform: `translateY(${offset-25}px)`, // Move vertically
+    width: "100vw", // Let the width adjust automatically
+    fontSize: { xs: "24px", sm: "32px" }, // Responsive font sizes
+    color: "white",
+    fontWeight: "bold",
+    fontStyle: "italic",
+    position: "absolute", // Position the text absolutely
+    top: "10%", // Adjust the distance from the top
+    left: "50%",
+    transform: "translate(-50%, -50%)", // Center horizontally and vertically
+    zIndex: 10, // Ensure text appears in front of the globe
+    marginBottom: "5000px", // Add this line to create more space below
   }}
 >
-  <Globe />
-</Box>
+  LAND ANALYSIS REIMAGINED.
+</Typography>
+            
+
+          <Box
+            ref={globeRef} // Add ref to globe container
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: { xs: "90vw", sm: "80vw", md: "60vw" },
+              height: { xs: "90vw", sm: "80vw", md: "60vw" },
+              backgroundColor: "transparent",
+              transform: `translateY(${offset-25}px)`, // Move vertically
+            }}
+          >
+            <Globe />
+          </Box>
         </Box>
 
         {/* Description Section */}
@@ -135,7 +149,7 @@ const Page = () => {
               color: "white",
               fontWeight: "bold",
               fontStyle: "italic",
-              marginBottom: "20px",
+              marginBottom: "30px",
             }}
           >
             Discover and explore the power of satellite imagery
@@ -146,7 +160,7 @@ const Page = () => {
               fontSize: { xs: "14px", sm: "16px" }, // Responsive font size
               color: "white",
               opacity: "0.75",
-              marginBottom: "30px",
+              marginBottom: "50px",
             }}
           >
             Harnessing Landsat satellite passes to access detailed surface
@@ -280,26 +294,26 @@ const Page = () => {
                 />
               </Box>
             )}
+           
 
-            <Button
-              variant="outlined"
-              onClick={handleNext}
-              sx={{
-                marginTop: "20px",
-                backgroundColor: "white",
-                color: "white",
-                "&:hover": {
-                  backgroundColor: "lightgray",
-                },
-              }}
-            >
-              {activeStep === 1 ? "Submit" : "Next"}
-            </Button>
+           <Box
+  sx={{
+    display: 'flex',
+    justifyContent: 'flex-end', // Aligns children to the right
+    marginTop: '20px', // Optional: Add some spacing above the button
+  }}
+>
+  <Button onClick={handleNext} variant="outlined" color="primary">
+    {activeStep === 1 ? "Submit" : "Next"}
+  </Button>
+</Box>
+          
           </Box>
         )}
-      </Box>
 
-      <ParticlesBackground />
+        {/* Particles Background */}
+        <ParticlesBackground />
+      </Box>
     </ThemeProvider>
   );
 };

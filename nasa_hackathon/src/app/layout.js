@@ -2,7 +2,7 @@
 "use client";
 import localFont from "next/font/local";
 import "./globals.css";
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from './theme'; // Adjust this import based on your project structure
 import ParticlesBackground from './components/ParticlesBackground';
@@ -22,6 +22,10 @@ const geistMono = localFont({
 });
 
 export default function RootLayout({ children }) {
+  // Scroll to top when the component mounts or is reloaded
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <html lang="en">
