@@ -1,7 +1,6 @@
 "use server";
 
 import { promises as fs } from "fs";
-import next from "next";
 import path from "path";
 
 const cycleDayOne = new Date("2024-01-08");
@@ -58,7 +57,7 @@ export async function getNextPassingTime(requestedPath, requestedRow) {
       nextPassingTime.setUTCDate(nextPassingTime.getDate() + daysLeft);
       const hours = imageStart.split("-")[1].split(":");
       nextPassingTime.setUTCHours(hours[0], hours[1], hours[2], 0);
-      return nextPassingTime;
+      return nextPassingTime.toISOString();
     }
   }
 }
