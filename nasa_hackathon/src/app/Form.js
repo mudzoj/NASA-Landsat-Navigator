@@ -14,12 +14,41 @@ const Form = () => {
   const [message, setMessage] = useState("");
   const [notificationTime, setNotificationTime] = useState(dayjs()); // Set initial value to ensure proper formatting
   const [loader, setLoader] = useState(false);
+  const [error, setError] = useState(""); // Error message state
+
+  // Function to validate email format
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoader(true);
-  
+
+    // Validation checks
+    if (!name || !email || !message || !notificationTime) {
+      setError("All fields are required.");
+      setLoader(false);
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      setError("Please enter a valid email address.");
+      setLoader(false);
+      return;
+    }
+
+    if (!notificationTime.isValid()) {
+      setError("Please select a valid time.");
+      setLoader(false);
+      return;
+    }
+
     try {
+      // Clear error
+      setError("");
+
       // Add a new document to the "contacts" collection
       await addDoc(collection(db, "contacts"), {
         name: name,
@@ -36,28 +65,32 @@ const Form = () => {
       setMessage("");
       setNotificationTime(dayjs()); // Reset the time picker to the current time
     } catch (error) {
-      alert(error.message);
+      setError("An error occurred. Please try again later.");
       setLoader(false);
     }
   };
   
-
   return (
     <form className="form" onSubmit={handleSubmit}>
       <h1>Contact Us 🤳</h1>
+
+      {error && <p style={{ color: "red" }}>{error}</p>}
     
       <label>Name</label>
       <input
         placeholder="Name"
         value={name}
         onChange={(e) => setName(e.target.value)}
+        required
       />
     
       <label>Email</label>
       <input
         placeholder="Email"
+        type="email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
+        required
       />
     
       <label>Message</label>
@@ -65,6 +98,7 @@ const Form = () => {
         placeholder="Message"
         value={message}
         onChange={(e) => setMessage(e.target.value)}
+        required
       ></textarea>
     
       {/* Time Picker for Notification Time */}
@@ -80,6 +114,7 @@ const Form = () => {
           renderInput={(params) => (
             <TextField
               {...params}
+              required
               sx={{
                 "& .MuiInputBase-root": {
                   color: "white", // Change text color to white
