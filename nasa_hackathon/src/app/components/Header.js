@@ -85,13 +85,14 @@ const Header = () => {
               <>
                 <MenuItem onClick={handleMenuClose}>Welcome, {user.displayName}</MenuItem>
                 <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
+                  <Link href="/profile" passHref>
+                <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+              </Link>
               </>
             ) : (
               <MenuItem onClick={handleSignIn}>Login/Signup</MenuItem>
             )}
-            <Link href="/profile" passHref>
-              <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-            </Link>
+            
           </Menu>
         </div>
       </Toolbar>
