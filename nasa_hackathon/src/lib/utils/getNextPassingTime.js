@@ -1,8 +1,10 @@
 "use server";
 
 import { promises as fs } from "fs";
+import next from "next";
 import path from "path";
 
+const cycleDayOne = new Date("2024-01-08");
 const pathSchedule = [
   [13, 29, 45, 61, 77, 93, 102, 118, 134, 150, 166, 182, 198, 214, 230],
   [4, 20, 36, 52, 68, 84, 93, 109, 125, 141, 157, 173, 189, 205, 221],
@@ -47,7 +49,16 @@ export async function getNextPassingTime(requestedPath, requestedRow) {
   while ((match = pattern.exec(scheduleText)) !== null) {
     const [_, path, row, imageStart, station] = match;
     if (parseInt(path) == requestedPath && parseInt(row) == requestedRow) {
-      return imageStart;
+      const currentDay = new Date();
+      const currentCycleDay =
+        Math.floor((currentDay - cycleDayOne) / (1000 * 60 * 60 * 24)) % 16;
+      let daysLeft = day - currentCycleDay;
+      if (daysLeft < 0) daysLeft += 16;
+      const nextPassingTime = new Date();
+      nextPassingTime.setUTCDate(nextPassingTime.getDate() + daysLeft);
+      const hours = imageStart.split("-")[1].split(":");
+      nextPassingTime.setUTCHours(hours[0], hours[1], hours[2], 0);
+      return next;
     }
   }
 }
