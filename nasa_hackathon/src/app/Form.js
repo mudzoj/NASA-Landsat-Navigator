@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import "./app.css";
 import { db } from "./firebase";
-import { collection, addDoc } from "firebase/firestore"; // Import necessary Firestore functions
+import { collection, addDoc } from "firebase/firestore";
 import { TextField } from "@mui/material";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider"; // Provider for localization
+import { TimePicker } from "@mui/x-date-pickers/TimePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from 'dayjs';
 
@@ -12,7 +12,7 @@ const Form = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
-  const [notificationDate, setNotificationDate] = useState(null); // Add state for the date picker
+  const [notificationTime, setNotificationTime] = useState(dayjs()); // Set initial value to ensure proper formatting
   const [loader, setLoader] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -25,16 +25,16 @@ const Form = () => {
         name: name,
         email: email,
         message: message,
-        notificationDate: notificationDate ? notificationDate.format() : null, // Add the selected date to Firestore as a string
+        notificationTime: notificationTime ? notificationTime.format('HH:mm:ss') : null, // Save time as string in HH:mm:ss format
       });
       setLoader(false);
       alert("Your message has been submitted 👍");
-  
+      
       // Clear form fields
       setName("");
       setEmail("");
       setMessage("");
-      setNotificationDate(null); // Clear the date picker
+      setNotificationTime(dayjs()); // Reset the time picker to the current time
     } catch (error) {
       alert(error.message);
       setLoader(false);
@@ -67,14 +67,35 @@ const Form = () => {
         onChange={(e) => setMessage(e.target.value)}
       ></textarea>
     
-      {/* Date Picker for Notification Date */}
-      <label>Choose Notification Date</label>
+      {/* Time Picker for Notification Time */}
+      <label>Choose Notification Time</label>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <DatePicker
-          label="Notification Date"
-          value={notificationDate}
-          onChange={(newValue) => setNotificationDate(newValue)}
-          renderInput={(params) => <TextField {...params} />}
+        <TimePicker
+          label="Notification Time"
+          value={notificationTime}
+          onChange={(newValue) => setNotificationTime(newValue)}
+          ampm={false} // Use 24-hour format to properly show seconds
+          views={['hours', 'minutes', 'seconds']} // Specify the views to include seconds
+          inputFormat="HH:mm:ss" // Specify the format to display seconds
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              sx={{
+                "& .MuiInputBase-root": {
+                  color: "white", // Change text color to white
+                },
+                "& .MuiInputLabel-root": {
+                  color: "white", // Change label color to white
+                },
+                "& .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "white", // Change outline color to white
+                },
+                "& .MuiSvgIcon-root": {
+                  color: "white", // Change icon color to white
+                }
+              }}
+            />
+          )}
         />
       </LocalizationProvider>
     
