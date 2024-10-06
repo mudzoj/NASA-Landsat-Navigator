@@ -1,3 +1,4 @@
+import { getNextPassingTime } from "@/lib/utils/getNextPassingTime";
 import { promises as fs } from "fs";
 import path from "path";
 
@@ -23,9 +24,11 @@ export async function GET(request) {
     console.log(diff_minutes(notificationTime, currentTime));
     if (diff_minutes(notificationTime, currentTime) < 10) {
       phoneNumbersToNotify.push(notificationTimes[notificationTime]);
-      // TODO: SMS logic here
+      // TODO: SMS logic here (say something like satellite is going to pass in 10 minutes)
       // phone number is in notificationTimes[notificationTime]
       console.log("notifying " + notificationTimes[notificationTime]);
+      const newNotificationTime = getNextPassingTime(47, 26); // TODO: use path and row from user settings
+      // TODO: save new time to database
     }
   }
   return new Response();
