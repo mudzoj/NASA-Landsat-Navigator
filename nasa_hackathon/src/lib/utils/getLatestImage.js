@@ -1,5 +1,7 @@
 "use server";
 
+import { getPreviousPassingTime } from "./getPreviousPassingTime";
+
 const API_URL = "https://m2m.cr.usgs.gov/api/api/json/stable/";
 
 // returns image link
@@ -14,13 +16,16 @@ export async function getLatestImage(requestedPath, requestedRow) {
   // key is in apiKey.data
   const apiKey = await authRes.json();
 
+  const twoDaysAgo = new Date();
+  twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+  const acquisitionDate = await getPreviousPassingTime(
+    requestedPath,
+    twoDaysAgo.toISOString()
+  );
   const filtersJson = {
     acquisitionFilter: {
-      start: "2024-08-17T00:00:00.000Z",
-      end: "2024-08-17T00:00:00.000Z",
-    },
-    cloudCoverFilter: {
-      max: 15,
+      start: acquisitionDate,
+      end: acquisitionDate,
     },
     metadataFilter: {
       filterType: "and",
@@ -57,9 +62,6 @@ export async function getLatestImage(requestedPath, requestedRow) {
   });
   let data = await res.json();
   data = data.data.results[0];
-  console.log(
-    "🚀 ~ getLatestImage ~ data.browse[0].browsePath:",
-    data.browse[0].browsePath
-  );
+  console.log(data.browse[0].browsePath);
   return data.browse[0].browsePath;
 }
