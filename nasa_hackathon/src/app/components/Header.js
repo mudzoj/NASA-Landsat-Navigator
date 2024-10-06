@@ -46,8 +46,8 @@ const Header = () => {
             <Image 
               src="/images/logo.png"
               alt="logo"
-              width={100}
-              height={100}
+              width={125}
+              height={125}
               style={{ width: '10%', height: 'auto', marginRight: '10px', marginTop: "5px" }}
             />
             <Image 
@@ -85,13 +85,14 @@ const Header = () => {
               <>
                 <MenuItem onClick={handleMenuClose}>Welcome, {user.displayName}</MenuItem>
                 <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
+                  <Link href="/profile" passHref>
+                <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+              </Link>
               </>
             ) : (
               <MenuItem onClick={handleSignIn}>Login/Signup</MenuItem>
             )}
-            <Link href="/profile" passHref>
-              <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-            </Link>
+            
           </Menu>
         </div>
       </Toolbar>
