@@ -21,14 +21,13 @@ export async function GET(request) {
   const phoneNumbersToNotify = [];
   const currentTime = new Date();
   for (const notificationTime of Object.keys(notificationTimes)) {
-    console.log(diff_minutes(notificationTime, currentTime));
     if (diff_minutes(notificationTime, currentTime) < 10) {
       phoneNumbersToNotify.push(notificationTimes[notificationTime]);
       // TODO: SMS logic here (say something like satellite is going to pass in 10 minutes)
       // phone number is in notificationTimes[notificationTime]
       console.log("notifying " + notificationTimes[notificationTime]);
-      const newNotificationTime = getNextPassingTime(47, 26); // TODO: use path and row from user settings
-      // TODO: save new time to database
+      const newNotificationTime = getNextPassingTime(47, 26); // TODO: use path and row from user settings (also not priority)
+      // TODO: save new time to database (also not priority)
     }
   }
   return new Response();
