@@ -387,7 +387,7 @@ const Page = () => {
                textAlign: 'center',
              }}
            >
-             In the meantime, here's the latest capture of your location:
+             In the meantime, here is the latest capture of your location:
            </Typography>
          
            <img
