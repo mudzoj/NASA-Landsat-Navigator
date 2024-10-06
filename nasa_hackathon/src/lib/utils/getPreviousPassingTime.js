@@ -1,8 +1,5 @@
 "use server";
 
-import { promises as fs } from "fs";
-import path from "path";
-
 const cycleDayOne = new Date("2024-01-08");
 const pathSchedule = [
   [13, 29, 45, 61, 77, 93, 102, 118, 134, 150, 166, 182, 198, 214, 230],
@@ -23,8 +20,7 @@ const pathSchedule = [
   [6, 22, 38, 54, 70, 86, 95, 111, 127, 143, 159, 175, 191, 207, 223],
 ];
 
-export async function getNextPassingTime(requestedPath, requestedRow) {
-  const pattern = /(\d{2,3})\s+(\d{2})\s+(\d{3}-\d{2}:\d{2}:\d{2})\s+(\w{3})/g;
+export async function getPreviousPassingTime(requestedPath, date) {
   let day;
   let isFound = false;
   for (let i = 0; i < 16 && !isFound; i++) {
@@ -37,27 +33,20 @@ export async function getNextPassingTime(requestedPath, requestedRow) {
     }
   }
 
-  const scheduleText = await fs.readFile(
-    path.join(
-      process.cwd(),
-      `src/lib/data/landsat-9-schedule/day-${day + 1}.txt`
-    )
-  );
-
-  let match;
-  while ((match = pattern.exec(scheduleText)) !== null) {
-    const [_, path, row, imageStart, station] = match;
-    if (parseInt(path) == requestedPath && parseInt(row) == requestedRow) {
-      const currentDay = new Date();
-      const currentCycleDay =
-        Math.floor((currentDay - cycleDayOne) / (1000 * 60 * 60 * 24)) % 16;
-      let daysLeft = day - currentCycleDay;
-      if (daysLeft < 0) daysLeft += 16;
-      const nextPassingTime = new Date();
-      nextPassingTime.setUTCDate(nextPassingTime.getDate() + daysLeft);
-      const hours = imageStart.split("-")[1].split(":");
-      nextPassingTime.setUTCHours(hours[0], hours[1], hours[2], 0);
-      return nextPassingTime.toISOString();
-    }
+  const currentCycleDay =
+    Math.floor((new Date(date) - cycleDayOne) / (1000 * 60 * 60 * 24)) % 16;
+  if (currentCycleDay == day) {
+    const result = new Date(date);
+    result.setDate(result.getDate() - 16);
+    return result.toISOString();
   }
+  const result = new Date(date);
+  let daysDifference;
+  if (currentCycleDay > day) {
+    daysDifference = currentCycleDay - day;
+  } else {
+    daysDifference = 16 - (day - currentCycleDay);
+  }
+  result.setDate(result.getDate() - daysDifference);
+  return result.toISOString();
 }
