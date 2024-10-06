@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import * as THREE from 'three';
+import React, { useEffect, useRef } from "react";
+import * as THREE from "three";
 
 const Globe = () => {
   const mountRef = useRef(null);
@@ -16,15 +16,25 @@ const Globe = () => {
     const scene = new THREE.Scene();
 
     // Create the camera
-    const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000000);
+    const camera = new THREE.PerspectiveCamera(
+      75,
+      width / height,
+      0.1,
+      1000000
+    );
     camera.position.set(0, 0, cameraDistance); // Set camera position
 
     // Create the globe geometry
     const geometry = new THREE.SphereGeometry(radius + 1000, 32, 32);
 
     // Load texture and create material
-    const texture = new THREE.TextureLoader().load('/assets/earth-texture-2.jpg'); // Load texture
-    const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true }); // Globe material
+    const texture = new THREE.TextureLoader().load(
+      "static/images/earth-texture-2.jpg"
+    ); // Load texture
+    const material = new THREE.MeshBasicMaterial({
+      map: texture,
+      transparent: true,
+    }); // Globe material
 
     // Create the globe mesh and add it to the scene
     const globe = new THREE.Mesh(geometry, material);
@@ -55,7 +65,7 @@ const Globe = () => {
       renderer.setSize(newWidth, newHeight); // Update renderer size
       camera.aspect = newWidth / newHeight; // Update camera aspect ratio
       camera.updateProjectionMatrix(); // Update projection matrix after resize
-      camera.position.z = (newWidth > 1200 ? 100000 : 70000); // Adjust camera position if needed
+      camera.position.z = newWidth > 1200 ? 100000 : 70000; // Adjust camera position if needed
     };
 
     // Scroll event handler
@@ -66,15 +76,15 @@ const Globe = () => {
       }
     };
 
-    window.addEventListener('resize', handleResize); // Listen to window resize
-    window.addEventListener('scroll', handleScroll); // Listen to window scroll
+    window.addEventListener("resize", handleResize); // Listen to window resize
+    window.addEventListener("scroll", handleScroll); // Listen to window scroll
 
     // Invoke resize to center the globe initially
     handleResize();
 
     return () => {
-      window.removeEventListener('resize', handleResize); // Clean up listener
-      window.removeEventListener('scroll', handleScroll); // Clean up scroll listener
+      window.removeEventListener("resize", handleResize); // Clean up listener
+      window.removeEventListener("scroll", handleScroll); // Clean up scroll listener
 
       // Clean up the renderer and its DOM element
       if (mountRef.current) {
@@ -85,7 +95,7 @@ const Globe = () => {
   }, []); // No dependencies, so this runs only once
 
   // Return the div that will hold the globe canvas
-  return <div ref={mountRef} style={{ width: '100%', height: '100%' }} />;
+  return <div ref={mountRef} style={{ width: "100%", height: "100%" }} />;
 };
 
 export default Globe;
