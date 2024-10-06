@@ -58,7 +58,7 @@ export async function getNextPassingTime(requestedPath, requestedRow) {
       nextPassingTime.setUTCDate(nextPassingTime.getDate() + daysLeft);
       const hours = imageStart.split("-")[1].split(":");
       nextPassingTime.setUTCHours(hours[0], hours[1], hours[2], 0);
-      return next;
+      return nextPassingTime;
     }
   }
 }
