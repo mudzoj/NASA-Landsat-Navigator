@@ -2,7 +2,7 @@
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import HomeIcon from '@mui/icons-material/Home'; // Import the Home icon
 import { AppBar, Box, Button, Container, IconButton, Menu, MenuItem, ThemeProvider, Toolbar, Typography } from '@mui/material';
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 // import ParticleBackground from './components/ParticleBackground'; // Import your ParticleBackground component
 import { AuthContextProvider, UserAuth } from "./AuthContext";
 import theme from './theme'; // Import your existing theme
@@ -10,7 +10,7 @@ import theme from './theme'; // Import your existing theme
 
 export default function Page() {
   const [anchorEl, setAnchorEl] = useState(null);
-  // const [loading, setLoading] = useState=true
+   const [loading, setLoading] = useState(true)
 
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -31,17 +31,22 @@ const handleSignIn = async() => {
 }
 const handleSignOut = async () => {
   try{
-    await logOut;
     setAnchorEl(null);
+    await logOut();
+   
   } catch (error){
     console.log(error);
   }
 }
 
-// useEffect(
-//   () => {
+useEffect(() => {
+ const checkAuthentication = async () => {
+  await new Promise ((resolve) => setTimeout(resolve, 50 ))
+  setLoading(false);
+ };
+ checkAuthentication();
 
-//   })
+  }, [user]);
 
  return (
     <ThemeProvider theme={theme}> {/* Wrap with ThemeProvider */}
@@ -68,20 +73,21 @@ const handleSignOut = async () => {
                   <AccountCircleIcon />
                 </IconButton>
                 <Button color="primary">About</Button>
-                {!user ? (<Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
+                {loading ? null : !user ? (<Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
                   <MenuItem onClick={handleSignIn} className="p-2 cursor-pointer">
                     Login
                   </MenuItem>
                   <MenuItem onClick={handleSignIn} className="p-2 cursor-pointer">
                     Sign up
                   </MenuItem>
-                  <MenuItem onClick={handleMenuClose} className="p-2 cursor-pointer">Profile</MenuItem>
+                
                 </Menu>): (
                   <div>
                     <p class="text-white">Welcome , {user.displayName}</p>
                     <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
-                    <MenuItem onClick={handleMenuClose} className="p-2 cursor-pointer">Profile</MenuItem>
-                    <MenuItem onClick={handleSignOut} className="cursor-point">Sign Out</MenuItem>
+                    <MenuItem onClick={handleMenuClose} className="p-2 cursor-pointer">Profile
+                    </MenuItem>
+                    <MenuItem onClick={handleSignOut}   className="p-2 cursor-point">Sign Out</MenuItem>
                     </Menu>
                   </div>
                 )}
