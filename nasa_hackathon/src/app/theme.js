@@ -1,10 +1,9 @@
-// src/theme.js
 import { createTheme } from '@mui/material/styles';
 
 const theme = createTheme({
   palette: {
     primary: {
-        main: '#FFFFFF', 
+      main: '#FFFFFF', 
     },
     secondary: {
       main: '#FF0000', // Bright red for accents (similar to SpaceX logo)
@@ -22,17 +21,17 @@ const theme = createTheme({
     fontFamily: 'Arial, sans-serif', // Clean, modern font choice
     h1: {
       color: '#FFFFFF', // White color for headings
+      '&:hover': {
+        color: '#CCCCCC', // Subtle change on hover
+      },
     },
     h2: {
       color: '#C1C1C1', // Light gray for subheadings
-    },
-    h6: {
-        color: '#FFFFFF', // Light gray for subheadings
+      '&:hover': {
+        color: '#A8A8A8', // Subtle change on hover
       },
-    body1: {
-      fontSize: '1rem', // Standard body text size
-      color: '#FFFFFF', // White for body text
     },
+    // Add hover styles for About text
     button: {
       textTransform: 'uppercase', // Uppercase button text
       letterSpacing: '1px', // Spacing for button text
@@ -40,6 +39,17 @@ const theme = createTheme({
       backgroundColor: '#FF0000', // Red background for buttons
       '&:hover': {
         backgroundColor: '#D40000', // Darker red on hover
+      },
+    },
+  },
+  components: {
+    MuiIconButton: {
+      styleOverrides: {
+        root: {
+          '&:hover': {
+            color: '#CCCCCC', // Color change on hover for icons
+          },
+        },
       },
     },
   },
