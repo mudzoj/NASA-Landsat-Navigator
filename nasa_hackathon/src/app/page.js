@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useState, useRef, useEffect } from "react";
 import {
   Typography,
@@ -15,7 +15,7 @@ import theme from "./theme"; // Adjust this import based on your project structu
 import Globe from "./components/Globe"; // Import the Globe component
 import ParticlesBackground from "./components/ParticlesBackground";
 import { AuthContextProvider, useAuth } from "./AuthContext";
-import { getLatestData } from "@/lib/utils/getLatestImage";
+import { getLatestImage } from "@/lib/utils/getLatestImage";
 
 const Page = () => {
   const [showStepper, setShowStepper] = useState(false);
@@ -62,7 +62,7 @@ const Page = () => {
       console.log("Form submitted:", { name, phone, location });
 
       // Fetch the latest data and display it in the box
-      const imgSrc = await getLatestData(47, 26);
+      const imgSrc = await getLatestImage(47, 26);
       setImageSrc(imgSrc); // Set the image URL in the state
 
       // Toggle the box when the form is submitted
@@ -187,7 +187,10 @@ const Page = () => {
           </Typography>
         </Box>
         <Box sx={{ width: "30%", margin: "20px 0", marginBottom: "50px" }}>
-          <Divider variant="fullWidth" sx={{ borderColor: "gray", height: "1px" }} />
+          <Divider
+            variant="fullWidth"
+            sx={{ borderColor: "gray", height: "1px" }}
+          />
         </Box>
 
         <Typography
@@ -203,8 +206,8 @@ const Page = () => {
             fontSize: { xs: "14px", sm: "16px" },
           }}
         >
-          Want a reminder when your location will be passed over by the
-          Landsat Satellite?
+          Want a reminder when your location will be passed over by the Landsat
+          Satellite?
         </Typography>
 
         <Button
@@ -217,19 +220,18 @@ const Page = () => {
             "&:hover": {
               backgroundColor: "lightgray",
             },
-            
-              "& .MuiOutlinedInput-root": {
-                "& fieldset": {
-                  borderColor: "gray",
-                },
-                "&:hover fieldset": {
-                  borderColor: "lightgray",
-                },
-                "&.Mui-focused fieldset": {
-                  borderColor: "white",
-                },
+
+            "& .MuiOutlinedInput-root": {
+              "& fieldset": {
+                borderColor: "gray",
               },
-            
+              "&:hover fieldset": {
+                borderColor: "lightgray",
+              },
+              "&.Mui-focused fieldset": {
+                borderColor: "white",
+              },
+            },
           }}
         >
           {buttonText}
@@ -269,16 +271,16 @@ const Page = () => {
                 opacity: "0.75",
                 marginBottom: "20px",
                 "& .MuiOutlinedInput-root": {
-                "& fieldset": {
-                  borderColor: "gray",
+                  "& fieldset": {
+                    borderColor: "gray",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "lightgray",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "white",
+                  },
                 },
-                "&:hover fieldset": {
-                  borderColor: "lightgray",
-                },
-                "&.Mui-focused fieldset": {
-                  borderColor: "white",
-                },
-              },
               }}
             >
               Want a reminder when your location will be passed over by the
@@ -343,66 +345,64 @@ const Page = () => {
                 {activeStep === 1 ? "Submit" : "Next"}
               </Button>
             </Box>
-           
           </Box>
         )}
 
         {/* Toggleable Box */}
         {showBox && (
-           <Box
-           sx={{
-             marginTop: "200px",
-             width: "60%",
-             padding: "20px",
-             backgroundColor: "transparent",
-             borderRadius: "10px",
-             border: "2px solid white",
-             color: "white",
-             display: 'flex', // Make the box a flex container
-             flexDirection: 'column', // Stack children vertically
-             alignItems: 'center', // Center children horizontally
-             justifyContent: 'center', // Center children vertically
-             paddingBottom: "100px"
-           }}
-         >
-           <Typography
-             sx={{
-               fontSize: { xs: "20px", sm: "24px" },
-               color: "white",
-               fontWeight: "bold",
-               fontStyle: "italic",
-               marginBottom: "30px",
-               textAlign: 'center',
-             }}
-           >
-             Request Received.
-           </Typography>
-         
-           <Typography
-             sx={{
-               fontSize: { xs: "14px", sm: "16px" },
-               color: "white",
-               opacity: "0.75",
-               marginBottom: "50px",
-               textAlign: 'center',
-             }}
-           >
-             In the meantime, here is the latest capture of your location:
-           </Typography>
-         
-           <img
-             src={imageSrc}
-             alt="Loaded"
-             style={{
-               maxWidth: "50%", // Ensure the image fits within the box
-               maxHeight: "50%",
-               objectFit: "contain", // Maintain aspect ratio
-               transform: "rotate(-15deg)", // Adjust the angle as needed
-               backgroundColor: "transparent",
-             }}
-           />
-         </Box>
-         
+          <Box
+            sx={{
+              marginTop: "200px",
+              width: "60%",
+              padding: "20px",
+              backgroundColor: "transparent",
+              borderRadius: "10px",
+              border: "2px solid white",
+              color: "white",
+              display: "flex", // Make the box a flex container
+              flexDirection: "column", // Stack children vertically
+              alignItems: "center", // Center children horizontally
+              justifyContent: "center", // Center children vertically
+              paddingBottom: "100px",
+            }}
+          >
+            <Typography
+              sx={{
+                fontSize: { xs: "20px", sm: "24px" },
+                color: "white",
+                fontWeight: "bold",
+                fontStyle: "italic",
+                marginBottom: "30px",
+                textAlign: "center",
+              }}
+            >
+              Request Received.
+            </Typography>
+
+            <Typography
+              sx={{
+                fontSize: { xs: "14px", sm: "16px" },
+                color: "white",
+                opacity: "0.75",
+                marginBottom: "50px",
+                textAlign: "center",
+              }}
+            >
+              In the meantime, here is the latest capture of your location:
+            </Typography>
+
+            <img
+              src={imageSrc}
+              alt="Loaded"
+              style={{
+                maxWidth: "50%", // Ensure the image fits within the box
+                maxHeight: "50%",
+                objectFit: "contain", // Maintain aspect ratio
+                transform: "rotate(-15deg)", // Adjust the angle as needed
+                backgroundColor: "transparent",
+              }}
+            />
+          </Box>
         )}
       </Box>
       <ParticlesBackground />
