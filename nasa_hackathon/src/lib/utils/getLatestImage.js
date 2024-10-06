@@ -2,7 +2,8 @@
 
 const API_URL = "https://m2m.cr.usgs.gov/api/api/json/stable/";
 
-export async function getGridImages(requestedPath, requestedRow) {
+// returns image link
+export async function getLatestImage(requestedPath, requestedRow) {
   const authRes = await fetch(API_URL + "login-token", {
     method: "POST",
     body: JSON.stringify({
@@ -10,10 +11,10 @@ export async function getGridImages(requestedPath, requestedRow) {
       token: process.env.M2M_TOKEN,
     }),
   });
+  // key is in apiKey.data
   const apiKey = await authRes.json();
-  console.log(apiKey.data);
 
-  const requestJson = {
+  const filtersJson = {
     acquisitionFilter: {
       start: "2024-08-17T00:00:00.000Z",
       end: "2024-08-17T00:00:00.000Z",
@@ -46,5 +47,19 @@ export async function getGridImages(requestedPath, requestedRow) {
     },
   };
 
-  return;
+  const res = await fetch(API_URL + "scene-search", {
+    method: "POST",
+    headers: { "X-Auth-Token": apiKey.data },
+    body: JSON.stringify({
+      datasetName: "landsat_ot_c2_l2",
+      sceneFilter: filtersJson,
+    }),
+  });
+  let data = await res.json();
+  data = data.data.results[0];
+  console.log(
+    "🚀 ~ getLatestImage ~ data.browse[0].browsePath:",
+    data.browse[0].browsePath
+  );
+  return data.browse[0].browsePath;
 }
