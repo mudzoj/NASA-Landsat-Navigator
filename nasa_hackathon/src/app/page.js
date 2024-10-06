@@ -10,12 +10,12 @@ import {
   StepLabel,
   TextField,
   Divider,
-  Alert,
 } from "@mui/material";
 import theme from "./theme"; // Adjust this import based on your project structure
 import Globe from "./components/Globe"; // Import the Globe component
 import ParticlesBackground from "./components/ParticlesBackground";
-import { AuthContextProvider, useAuth } from "./AuthContext"; // Import useAuth here
+import { AuthContextProvider, useAuth } from "./AuthContext";
+import { getLatestData } from "@/lib/utils/getLatestImage";
 
 const Page = () => {
   const [showStepper, setShowStepper] = useState(false);
@@ -23,26 +23,28 @@ const Page = () => {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [location, setLocation] = useState("");
-  const [showNewBox, setShowNewBox] = useState(false); // New state for the new box
+  const [buttonText, setButtonText] = useState("Get Started");
+  const [showBox, setShowBox] = useState(false);
+  const [imageSrc, setImageSrc] = useState(null); // State to store image URL
   const stepperRef = useRef(null);
-  const newBoxRef = useRef(null); // Ref for the new box
   const globeRef = useRef(null);
   const [offset, setOffset] = useState(0);
   const maxOffset = 200; // Set the maximum offset value (adjust as needed)
-  const { isLoggedIn } = useAuth(); // Access the authentication 
-  const [alertVisible, setAlertVisible] = useState(false);
+  const { isLoggedIn } = useAuth(); // Access the authentication context
 
   const handleGetStartedClick = () => {
     if (!isLoggedIn) {
-      setAlertVisible(true);
+      // Scroll to the top of the page
       window.scrollTo({
         top: 0,
         behavior: "smooth",
       });
       return; // Exit if the user is not logged in
     }
-  
+
     setShowStepper(true);
+    setButtonText("Submit"); // Change button text to Submit when stepper starts
+    setShowBox(false); // Make sure the box is hidden on Get Started click
     setTimeout(() => {
       if (stepperRef.current) {
         window.scrollTo({
@@ -53,26 +55,26 @@ const Page = () => {
     }, 100);
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (activeStep === 0 && name && phone) {
       setActiveStep((prevStep) => prevStep + 1);
     } else if (activeStep === 1 && location) {
       console.log("Form submitted:", { name, phone, location });
 
-      // Hide location field and submit button, and show new box
-      setShowNewBox(true);
-      setShowStepper(false); // Hide the stepper
-      setActiveStep(0); // Reset the stepper to the first step
+      // Fetch the latest data and display it in the box
+      const imgSrc = await getLatestData(47, 26);
+      setImageSrc(imgSrc); // Set the image URL in the state
 
-      // Scroll to the new box
-      setTimeout(() => {
-        if (newBoxRef.current) {
-          window.scrollTo({
-            top: newBoxRef.current.offsetTop,
-            behavior: "smooth",
-          });
-        }
-      }, 100);
+      // Toggle the box when the form is submitted
+      setShowBox(!showBox);
+
+      // Reset the form and stepper after submission
+      setActiveStep(0);
+      setName("");
+      setPhone("");
+      setLocation("");
+      setShowStepper(false);
+      setButtonText("Submit Again?");
     }
   };
 
@@ -98,17 +100,17 @@ const Page = () => {
         sx={{
           paddingTop: "50px",
           display: "flex",
-          flexDirection: "column", // Stack elements vertically
+          flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
-          minHeight: "100vh", // Fill the full viewport height
+          minHeight: "100vh",
           position: "relative",
           backgroundColor: "transparent",
         }}
       >
         <Box
           sx={{
-            position: "relative", // Set the parent container as relative
+            position: "relative",
             textAlign: "center",
             marginBottom: "50px",
             backgroundColor: "transparent",
@@ -117,24 +119,24 @@ const Page = () => {
           <Typography
             variant="h4"
             sx={{
-              width: "100vw", // Let the width adjust automatically
-              fontSize: { xs: "24px", sm: "32px" }, // Responsive font sizes
+              width: "100vw",
+              fontSize: { xs: "24px", sm: "32px" },
               color: "white",
               fontWeight: "bold",
               fontStyle: "italic",
-              position: "absolute", // Position the text absolutely
-              top: "10%", // Adjust the distance from the top
+              position: "absolute",
+              top: "10%",
               left: "50%",
-              transform: "translate(-50%, -50%)", // Center horizontally and vertically
-              zIndex: 10, // Ensure text appears in front of the globe
-              marginBottom: "5000px", // Add this line to create more space below
+              transform: "translate(-50%, -50%)",
+              zIndex: 10,
+              marginBottom: "5000px",
             }}
           >
             LAND ANALYSIS REIMAGINED.
           </Typography>
 
           <Box
-            ref={globeRef} // Add ref to globe container
+            ref={globeRef}
             sx={{
               display: "flex",
               alignItems: "center",
@@ -142,27 +144,26 @@ const Page = () => {
               width: { xs: "90vw", sm: "80vw", md: "60vw" },
               height: { xs: "90vw", sm: "80vw", md: "60vw" },
               backgroundColor: "transparent",
-              transform: `translateY(${offset - 25}px)`, // Move vertically
+              transform: `translateY(${offset - 25}px)`,
             }}
           >
             <Globe />
           </Box>
         </Box>
 
-        {/* Description Section */}
         <Box
           sx={{
-            width: { xs: "90%", sm: "70%", md: "50%" }, // Responsive width for the description
+            width: { xs: "90%", sm: "70%", md: "50%" },
             padding: "16px",
             backgroundColor: "rgba(255, 255, 255, 0.01)",
             textAlign: "center",
             marginBottom: "40px",
-            zIndex: 1, // Ensure text appears above the globe
+            zIndex: 1,
           }}
         >
           <Typography
             sx={{
-              fontSize: { xs: "20px", sm: "24px" }, // Responsive font size
+              fontSize: { xs: "20px", sm: "24px" },
               color: "white",
               fontWeight: "bold",
               fontStyle: "italic",
@@ -174,20 +175,21 @@ const Page = () => {
 
           <Typography
             sx={{
-              fontSize: { xs: "14px", sm: "16px" }, // Responsive font size
+              fontSize: { xs: "14px", sm: "16px" },
               color: "white",
               opacity: "0.75",
               marginBottom: "0px",
             }}
           >
-            Harnessing Landsat satellite passes to access detailed surface reflectance data to compare with your own ground-based measurements, all in one place.
+            Harnessing Landsat satellite passes to access detailed surface
+            reflectance data to compare with your own ground-based measurements,
+            all in one place.
           </Typography>
         </Box>
-        
-        <Box sx={{ width: '30%', margin: '20px 0', marginBottom: "50px"}}> {/* Adjust margin as needed */}
-          <Divider variant="fullWidth" sx={{ borderColor: 'gray', height: '1px' }} />
+        <Box sx={{ width: "30%", margin: "20px 0", marginBottom: "50px" }}>
+          <Divider variant="fullWidth" sx={{ borderColor: "gray", height: "1px" }} />
         </Box>
-        
+
         <Typography
           sx={{
             display: "flex",
@@ -198,13 +200,13 @@ const Page = () => {
             fontWeight: "bold",
             opacity: "1",
             marginBottom: "10px",
-            fontSize: { xs: "14px", sm: "16px" }, // Responsive font size
+            fontSize: { xs: "14px", sm: "16px" },
           }}
         >
-          Want a reminder when your location will be passed over by the Landsat Satellite?
+          Want a reminder when your location will be passed over by the
+          Landsat Satellite?
         </Typography>
 
-        {/* Button Section */}
         <Button
           variant="outlined"
           size="large"
@@ -215,121 +217,205 @@ const Page = () => {
             "&:hover": {
               backgroundColor: "lightgray",
             },
+            
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": {
+                  borderColor: "gray",
+                },
+                "&:hover fieldset": {
+                  borderColor: "lightgray",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "white",
+                },
+              },
+            
           }}
         >
-          Get Started
+          {buttonText}
         </Button>
 
-        {alertVisible && (
-          <Alert 
-            severity="warning" // Change severity to 'info', 'success', or 'error' as needed
-            onClose={() => setAlertVisible(false)} // Close the alert when the close button is clicked
-            sx={{ 
-              position: 'fixed', 
-              top: '50%', // Center vertically
-              left: '50%', // Center horizontally
-              transform: 'translate(-50%, -50%)', // Offset to truly center it
-              zIndex: 1000, 
-              backgroundColor: 'rgba(255, 255, 255, 0.8)', // White background with transparency
-              color: 'black', // Change text color to black for better visibility
-              borderRadius: '8px', // Optional: rounded corners
-              width: '80%', // Optional: responsive width
-              maxWidth: '400px', // Optional: max width for larger screens
-            }} 
-          >
-            Please SignIn/SignUp to get started!
-          </Alert>
-        )}
-
-        {/* Stepper Section */}
         {showStepper && (
           <Box
             ref={stepperRef}
             sx={{
               width: { xs: "90%", sm: "70%", md: "50%" },
-              margin: "20px 0",
-              zIndex: 1,
-              backgroundColor: "rgba(255, 255, 255, 0.1)", // Adjust opacity for background
-              borderRadius: "8px", // Optional: add some rounding to the box
-              padding: "16px", // Add some padding inside the box
+              padding: "20px",
+              borderRadius: "8px",
+              backgroundColor: "transparent",
+              marginTop: "400px",
+              boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": {
+                  borderColor: "gray",
+                },
+                "&:hover fieldset": {
+                  borderColor: "lightgray",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "white",
+                },
+              },
             }}
           >
+            <Typography
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "16px",
+                color: "white",
+                fontWeight: "bold",
+                opacity: "0.75",
+                marginBottom: "20px",
+                "& .MuiOutlinedInput-root": {
+                "& fieldset": {
+                  borderColor: "gray",
+                },
+                "&:hover fieldset": {
+                  borderColor: "lightgray",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "white",
+                },
+              },
+              }}
+            >
+              Want a reminder when your location will be passed over by the
+              Landsat Satellite?
+            </Typography>
             <Stepper activeStep={activeStep} alternativeLabel>
-              {["Contact Info", "Location"].map((label) => (
-                <Step key={label}>
+              {["User Info", "Location"].map((label, index) => (
+                <Step key={index}>
                   <StepLabel>{label}</StepLabel>
                 </Step>
               ))}
             </Stepper>
 
             {activeStep === 0 && (
-              <Box sx={{ marginTop: 2 }}>
+              <Box sx={{ mt: 2 }}>
                 <TextField
                   label="Name"
                   variant="outlined"
                   fullWidth
+                  margin="normal"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  sx={{ marginBottom: 2 }} // Adjust margin as needed
+                  required
                 />
                 <TextField
                   label="Phone"
                   variant="outlined"
                   fullWidth
+                  margin="normal"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  sx={{ marginBottom: 2 }} // Adjust margin as needed
+                  required
                 />
-                <Button variant="contained" onClick={handleNext}>
-                  Next
-                </Button>
               </Box>
             )}
 
             {activeStep === 1 && (
-              <Box sx={{ marginTop: 2 }}>
+              <Box sx={{ mt: 2 }}>
                 <TextField
                   label="Location"
                   variant="outlined"
                   fullWidth
+                  margin="normal"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
-                  sx={{ marginBottom: 2 }} // Adjust margin as needed
+                  required
                 />
-                <Button variant="contained" onClick={handleNext}>
-                  Submit
-                </Button>
               </Box>
             )}
+
+            <Box sx={{ mt: 2, marginBottom: "100px" }}>
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={handleNext}
+                fullWidth
+                disabled={
+                  (activeStep === 0 && (!name || !phone)) ||
+                  (activeStep === 1 && !location)
+                }
+              >
+                {activeStep === 1 ? "Submit" : "Next"}
+              </Button>
+            </Box>
+           
           </Box>
         )}
 
-        {/* New Box Section */}
-        {showNewBox && (
-          <Box
-            ref={newBoxRef} // Add ref to the new box
-            sx={{
-              width: "90%",
-              margin: "20px 0",
-              padding: "16px",
-              backgroundColor: "white", // Make the background white
-              borderRadius: "8px", // Optional: rounding corners
-              boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)", // Optional: add shadow for depth
-            }}
-          >
-            <Typography variant="h5" component="h2">
-              Thank you for your submission!
-            </Typography>
-            <Typography variant="body1">
-              We will notify you when your location will be passed over by the Landsat Satellite.
-            </Typography>
-          </Box>
+        {/* Toggleable Box */}
+        {showBox && (
+           <Box
+           sx={{
+             marginTop: "200px",
+             width: "60%",
+             padding: "20px",
+             backgroundColor: "transparent",
+             borderRadius: "10px",
+             border: "2px solid white",
+             color: "white",
+             display: 'flex', // Make the box a flex container
+             flexDirection: 'column', // Stack children vertically
+             alignItems: 'center', // Center children horizontally
+             justifyContent: 'center', // Center children vertically
+             paddingBottom: "100px"
+           }}
+         >
+           <Typography
+             sx={{
+               fontSize: { xs: "20px", sm: "24px" },
+               color: "white",
+               fontWeight: "bold",
+               fontStyle: "italic",
+               marginBottom: "30px",
+               textAlign: 'center',
+             }}
+           >
+             Request Received.
+           </Typography>
+         
+           <Typography
+             sx={{
+               fontSize: { xs: "14px", sm: "16px" },
+               color: "white",
+               opacity: "0.75",
+               marginBottom: "50px",
+               textAlign: 'center',
+             }}
+           >
+             In the meantime, here's the latest capture of your location:
+           </Typography>
+         
+           <img
+             src={imageSrc}
+             alt="Loaded"
+             style={{
+               maxWidth: "50%", // Ensure the image fits within the box
+               maxHeight: "50%",
+               objectFit: "contain", // Maintain aspect ratio
+               transform: "rotate(-15deg)", // Adjust the angle as needed
+               backgroundColor: "transparent",
+             }}
+           />
+         </Box>
+         
         )}
-
-        <ParticlesBackground />
       </Box>
+      <ParticlesBackground />
     </ThemeProvider>
   );
 };
 
-export default Page;
+const App = () => {
+  return (
+    <AuthContextProvider>
+      <Page />
+    </AuthContextProvider>
+  );
+};
+
+export default App;
