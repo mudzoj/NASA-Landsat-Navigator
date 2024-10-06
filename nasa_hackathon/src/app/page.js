@@ -21,7 +21,9 @@ const Page = () => {
   const [phone, setPhone] = useState("");
   const [location, setLocation] = useState("");
   const stepperRef = useRef(null);
+  const globeRef = useRef(null);
   const [offset, setOffset] = useState(0);
+  const maxOffset = 200; // Set the maximum offset value (adjust as needed)
 
   const handleGetStartedClick = () => {
     setShowStepper(true);
@@ -45,9 +47,11 @@ const Page = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      // Update offset based on scroll position
       const scrollY = window.scrollY;
-      setOffset(scrollY * 5); // Move 5x further than scroll
+
+      // Calculate the new offset for vertical movement
+      const newOffset = Math.min(scrollY, maxOffset);
+      setOffset(newOffset);
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -98,19 +102,20 @@ const Page = () => {
           </Typography>
 
           <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: { xs: "90vw", sm: "80vw", md: "60vw" },
-              height: { xs: "90vw", sm: "80vw", md: "60vw" },
-              backgroundColor: "transparent",
-              marginTop: "50px", // Add margin below the globe
-              transform: `translateX(${offset}px)`, // Apply the offset for movement
-            }}
-          >
-            <Globe />
-          </Box>
+  ref={globeRef} // Add ref to globe container
+  sx={{
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: { xs: "90vw", sm: "80vw", md: "60vw" },
+    height: { xs: "90vw", sm: "80vw", md: "60vw" },
+    backgroundColor: "transparent",
+    // marginTop: "-50px", // Decrease from 50px to 20px (or lower)
+    transform: `translateY(${offset-25}px)`, // Move vertically
+  }}
+>
+  <Globe />
+</Box>
         </Box>
 
         {/* Description Section */}
@@ -121,6 +126,7 @@ const Page = () => {
             backgroundColor: "rgba(255, 255, 255, 0.01)",
             textAlign: "center",
             marginBottom: "40px",
+            zIndex: 1, // Ensure text appears above the globe
           }}
         >
           <Typography
@@ -171,7 +177,7 @@ const Page = () => {
           <Box
             ref={stepperRef}
             sx={{
-              width: "80vw",
+              width: { xs: "90%", sm: "70%", md: "50%" },
               padding: "20px",
               borderRadius: "8px",
               backgroundColor: "transparent",
