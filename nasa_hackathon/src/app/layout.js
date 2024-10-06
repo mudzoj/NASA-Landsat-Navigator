@@ -10,6 +10,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import theme from './theme'; // Adjust this import based on your project structure
 import Link from 'next/link';
 import Image from 'next/image';
+import { AuthContextProvider } from "./AuthContext";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -116,6 +117,7 @@ export default function RootLayout({ children }) {
             </div>
           </ParticlesBackground>
         </ThemeProvider>
+        
       </body>
     </html>
   );
