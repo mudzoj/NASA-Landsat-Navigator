@@ -9,6 +9,7 @@ import {
   Step,
   StepLabel,
   TextField,
+  Divider,
 } from "@mui/material";
 import theme from "./theme"; // Adjust this import based on your project structure
 import Globe from "./components/Globe"; // Import the Globe component
@@ -160,22 +161,48 @@ const Page = () => {
               fontSize: { xs: "14px", sm: "16px" }, // Responsive font size
               color: "white",
               opacity: "0.75",
-              marginBottom: "50px",
+              marginBottom: "0px",
             }}
           >
             Harnessing Landsat satellite passes to access detailed surface
             reflectance data to compare with your own ground-based measurements,
             all in one place.
-          </Typography>
-        </Box>
 
+            
+          </Typography>
+          </Box>
+          <Box sx={{ width: '30%', margin: '20px 0', marginBottom: "50px"}}> {/* Adjust margin as needed */}
+        <Divider variant="fullWidth" sx={{ borderColor: 'gray', height: '1px' }} />
+      </Box>
+          
+
+          
+        
+
+
+        <Typography
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "18px",
+                color: "white",
+                fontWeight: "bold",
+                opacity: "1",
+                marginBottom: "10px",
+                fontSize: { xs: "14px", sm: "16px" }, // Responsive font size
+                
+              }}
+            >
+              Want a reminder when your location will be passed over by the
+              Landsat Satellite?
+            </Typography>
         {/* Button Section */}
         <Button
           variant="outlined"
           size="large"
           onClick={handleGetStartedClick}
           sx={{
-            marginBottom: "40px",
             backgroundColor: "white",
             color: "white",
             "&:hover": {
@@ -185,17 +212,19 @@ const Page = () => {
         >
           Get Started
         </Button>
+       
 
         {/* Stepper Section */}
         {showStepper && (
           <Box
             ref={stepperRef}
             sx={{
+
               width: { xs: "90%", sm: "70%", md: "50%" },
               padding: "20px",
               borderRadius: "8px",
               backgroundColor: "transparent",
-              marginTop: "30px",
+              marginTop: "400px",
               boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
             }}
           >
