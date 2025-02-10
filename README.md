@@ -1,1 +1,1 @@
-# NASA-Hackathon
+# NASA Landsat Navigator
